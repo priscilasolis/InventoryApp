@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace InventoryApp.Models
 {
     public class ExternalLoginConfirmationViewModel
     {
+        [Required]
+        public string UserName { get; set; }
+
         [Required]
         [Display(Name = "Email")]
         public string Email { get; set; }
@@ -64,6 +68,12 @@ namespace InventoryApp.Models
 
     public class RegisterViewModel
     {
+        [Required]
+        [StringLength(50, ErrorMessage = "Name exceeds 50 characters")]
+        [Display(Name = "Name")]
+        public string UserName { get; set; }
+
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
