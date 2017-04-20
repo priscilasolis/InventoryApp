@@ -196,8 +196,15 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Migrations\201704200638357_ItemsAndOrders.cs" />
+    <Compile Include="Migrations\201704200638357_ItemsAndOrders.Designer.cs">
+      <DependentUpon>201704200638357_ItemsAndOrders.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Repositories\Extensions\ExtensionMethods.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ItemsController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -213,19 +220,24 @@
     <Compile Include="Migrations\201704152012314_name-change.Designer.cs">
       <DependentUpon>201704152012314_name-change.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201704200507422_ItemWithDescription.cs" />
+    <Compile Include="Migrations\201704200507422_ItemWithDescription.Designer.cs">
+      <DependentUpon>201704200507422_ItemWithDescription.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\Item.cs" />
+    <Compile Include="Models\ItemViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\PurchaseOrder.cs" />
+    <Compile Include="Models\Order.cs" />
     <Compile Include="Models\UserRolesDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\InventoryRepository.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\aspnet-InventoryApp-20170410010525.mdf" />
-    <Content Include="App_Data\aspnet-InventoryApp-20170410010525_log.ldf">
-      <DependentUpon>aspnet-InventoryApp-20170410010525.mdf</DependentUpon>
-    </Content>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\PagedList.css" />
@@ -289,8 +301,20 @@
     <Content Include="Views\Admin\Create.cshtml" />
     <Content Include="Views\Admin\EditUser.cshtml" />
     <Content Include="Views\Admin\EditRoles.cshtml" />
+    <Content Include="Views\Items\Create.cshtml" />
+    <Content Include="Views\Items\Delete.cshtml" />
+    <Content Include="Views\Items\Details.cshtml" />
+    <Content Include="Views\Items\Edit.cshtml" />
+    <Content Include="Views\Items\Index.cshtml" />
+    <Content Include="Views\Orders\Create.cshtml" />
+    <Content Include="Views\Orders\Delete.cshtml" />
+    <Content Include="Views\Orders\Details.cshtml" />
+    <Content Include="Views\Orders\Edit.cshtml" />
+    <Content Include="Views\Orders\Index.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
   </ItemGroup>
@@ -315,6 +339,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201704152012314_name-change.resx">
       <DependentUpon>201704152012314_name-change.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704200507422_ItemWithDescription.resx">
+      <DependentUpon>201704200507422_ItemWithDescription.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704200638357_ItemsAndOrders.resx">
+      <DependentUpon>201704200638357_ItemsAndOrders.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
