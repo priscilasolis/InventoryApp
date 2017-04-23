@@ -10,56 +10,10 @@
 <div>
     <h4>Item</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Quantity)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Quantity)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Threshold)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Threshold)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Picture)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Picture)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.MimeType)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.MimeType)
-        </dd>
-
-    </dl>
+    <div class="col-md-3 each-item">
+        <img src='@Url.Action("Image", "Items", new { id = Model.Id })' style="height: 100px; width: 100px;" /><br />
+        <text class="item-detail" style="font-weight:bold">@Html.DisplayFor(model => model.Name)</text><br />
+    </div>
 
     @using (Html.BeginForm()) {
         @Html.AntiForgeryToken()
