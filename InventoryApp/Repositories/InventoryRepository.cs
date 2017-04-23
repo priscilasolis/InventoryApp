@@ -50,10 +50,31 @@ namespace InventoryApp.Repositories
             return item;
         }
 
-        public void EditItem(Item item)
+
+        public Item EditItem(ItemViewModel itemViewModel, HttpPostedFileBase imageFile)
         {
+            Item item = new Item
+            {
+                Name = itemViewModel.Name,
+                Price = itemViewModel.Price,
+                Quantity = itemViewModel.Quantity,
+                Threshold = itemViewModel.Threshold
+            };
+
+            if (imageFile != null && imageFile.IsImage())
+            {
+                var pictureStream = imageFile.InputStream;
+                byte[] picture = new byte[pictureStream.Length];
+                pictureStream.Read(picture, 0, picture.Length);
+
+                item.Picture = picture;
+                item.MimeType = imageFile.ContentType;
+            }
+
             db.Entry(item).State = EntityState.Modified;
             db.SaveChanges();
+
+            return item;
         }
 
         public void EditItem(int id, ItemViewModel itemViewModel)
