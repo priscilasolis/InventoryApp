@@ -57,6 +57,7 @@ namespace InventoryApp.Repositories
             {
                 Name = itemViewModel.Name,
                 Price = itemViewModel.Price,
+                Description = itemViewModel.Description,
                 Quantity = itemViewModel.Quantity,
                 Threshold = itemViewModel.Threshold
             };

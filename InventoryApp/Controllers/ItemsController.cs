@@ -130,7 +130,7 @@ namespace InventoryApp.Controllers
         // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Quantity,Threshold,Price,Picture,MimeType")] Item item)
+        public ActionResult Edit([Bind(Include = "Name,Quantity,Description,Threshold,Price")] ItemViewModel item, HttpPostedFileBase imageFile)
         {
             if (ModelState.IsValid)
             {
