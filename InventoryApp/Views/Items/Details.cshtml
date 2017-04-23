@@ -9,56 +9,14 @@
 <div>
     <h4>Item</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Quantity)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Quantity)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Threshold)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Threshold)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Picture)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Picture)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.MimeType)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.MimeType)
-        </dd>
-
-    </dl>
+    <div class="each-item">
+        <img src='@Url.Action("Image", "Items", new { id = Model.Id })' style="height: 100px; width: 100px;" /><br />
+        <text class="item-detail" style="font-weight:bold">@Html.DisplayFor(model => model.Name)</text><br />
+        <text class="item-detail">Threshold:&nbsp; @Html.DisplayFor(model => model.Threshold)</text><br />
+        <text class="item-detail">Price:&nbsp;$@Html.DisplayFor(model => model.Price)</text><br />
+        <text class="item-detail">Quantity:&nbsp;@Html.DisplayFor(model => model.Quantity)</text><br />
+        <text class="item-detail">Description:&nbsp;@Html.DisplayFor(model => model.Description)</text><br />
+    </div>
 </div>
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
