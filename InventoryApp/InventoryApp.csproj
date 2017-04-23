@@ -242,6 +242,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\PagedList.css" />
+<<<<<<< HEAD
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
     <Content Include="Content\themes\base\autocomplete.css" />
@@ -283,6 +284,9 @@
     <Content Include="Content\themes\base\tabs.css" />
     <Content Include="Content\themes\base\theme.css" />
     <Content Include="Content\themes\base\tooltip.css" />
+=======
+    <Content Include="Content\style.css" />
+>>>>>>> origin/master
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -356,8 +360,13 @@
     <Content Include="Views\Orders\Details.cshtml" />
     <Content Include="Views\Orders\CancelSale.cshtml" />
     <Content Include="Views\Orders\Index.cshtml" />
+<<<<<<< HEAD
     <Content Include="Views\Orders\Create - Copia.cshtml" />
     <Content Include="Views\Orders\Edit - Copia.cshtml" />
+=======
+    <Content Include="Views\Dashboard\AdminDashboard.cshtml" />
+    <Content Include="Views\Dashboard\UserDashboard.cshtml" />
+>>>>>>> origin/master
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
