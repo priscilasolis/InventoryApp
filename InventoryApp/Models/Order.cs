@@ -17,6 +17,8 @@ namespace InventoryApp.Models
         [Key]
         public int Id { get; set; }
 
+        [Required]
+        [Range(1, Int32.MaxValue, ErrorMessage = "Value should be greater than 0")]
         public int Quantity { get; set; }
         public bool IsActive { get; set; }
 
