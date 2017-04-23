@@ -19,11 +19,26 @@ namespace InventoryApp.Controllers
         private readonly InventoryRepository _repository = new InventoryRepository();
 
         // GET: Orders
+        [Authorize(Roles = "Administrator,Supervisor")]
         public ActionResult Index()
         {
             var orders = db.Orders.Include(o => o.ApplicationUser).Include(o => o.Item);
             return View(orders.ToList());
         }
+
+
+        [Authorize]
+        public ActionResult UserIndex()
+        {
+            UserManager<ApplicationUser> UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+            ApplicationUser currentUser = UserManager.FindById(User.Identity.GetUserId());
+
+            var r = _repository.GetSalesUser(currentUser);
+            
+            return View(r);
+        }
+
+
 
         // GET: Orders/Details/5
         public ActionResult Details(int? id)

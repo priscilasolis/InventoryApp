@@ -1,30 +1,27 @@
 ﻿@model IEnumerable<InventoryApp.Models.Order>
 
 @{
-    ViewBag.Title = "Orders";
+    ViewBag.Title = "Sales";
 }
 
-<h2>Orders History</h2>
+<h2>Sales</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("New Sale Order", "Create")
 </p>
 <table class="table table-striped">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.ApplicationUser.Email)
+            @Html.DisplayNameFor(model => model.Quantity)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Item.Name)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Quantity)
+            @Html.DisplayNameFor(model => model.Item.Picture)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.IsActive)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Type)
+            Item Price
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Date)
@@ -35,19 +32,16 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.ApplicationUser.Email)
+            @Html.DisplayFor(modelItem => item.Quantity)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Item.Name)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Quantity)
+            <img src='@Url.Action("Image", "Items", new { id = item.Item.Id })' style="height: 50px; width: 50px;" /><br />
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.IsActive)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Type)
+            @Html.DisplayFor(modelItem => item.Item.Price)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Date)

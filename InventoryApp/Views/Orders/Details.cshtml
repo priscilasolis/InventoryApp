@@ -9,58 +9,14 @@
 <div>
     <h4>Order</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.ApplicationUser.Email)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.ApplicationUser.Email)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Item.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Item.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Quantity)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Quantity)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.IsActive)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.IsActive)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Type)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Type)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Date)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Date)
-        </dd>
-
-    </dl>
+    <div class="each-item">
+        <img src='@Url.Action("Image", "Items", new { id = Model.Item.Id })' style="height: 100px; width: 100px;" /><br />
+        <text class="item-detail" style="font-weight:bold">@Html.DisplayFor(model => model.Item.Name)</text><br />
+        <text class="item-detail">Email:&nbsp; @Html.DisplayFor(model => model.ApplicationUser.Email)</text><br />
+        <text class="item-detail">Quantity:&nbsp; @Html.DisplayFor(model => model.Quantity)</text><br />
+        <text class="item-detail">Item Price:&nbsp;$ @Html.DisplayFor(model => model.Item.Price)</text><br />
+        <text class="item-detail">Type:&nbsp;@Html.DisplayFor(model => model.Type)</text><br />
+        <text class="item-detail">Date:&nbsp;@Html.DisplayFor(model => model.Date)</text><br />
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+

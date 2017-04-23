@@ -362,6 +362,7 @@
     <Content Include="Views\Orders\Edit - Copia.cshtml" />
     <Content Include="Views\Dashboard\AdminDashboard.cshtml" />
     <Content Include="Views\Dashboard\UserDashboard.cshtml" />
+    <Content Include="Views\Orders\UserIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
