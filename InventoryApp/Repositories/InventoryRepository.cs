@@ -50,6 +50,10 @@ namespace InventoryApp.Repositories
             return item;
         }
 
+        public List<Order> GetSalesUser(ApplicationUser user)
+        {
+            return db.Orders.Where(o => o.IsActive && o.ApplicationUserId == user.Id && o.Type == Order.OrderType.Sale).ToList();
+        }
 
         public Item EditItem(Item item, HttpPostedFileBase imageFile)
         {
