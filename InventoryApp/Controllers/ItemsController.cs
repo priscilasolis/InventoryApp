@@ -14,7 +14,7 @@ namespace InventoryApp.Controllers
     public class ItemsController : Controller
     {
         //private DatabaseContext db = new DatabaseContext();
-        private readonly InventoryRepository _repository = new Repositories.InventoryRepository();
+        private readonly InventoryRepository _repository = new InventoryRepository();
 
         // GET: Items
         public ActionResult Index()
@@ -60,7 +60,7 @@ namespace InventoryApp.Controllers
         // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Name,Quantity,Threshold,Price")] ItemViewModel item, HttpPostedFileBase imageFile)
+        public ActionResult Create([Bind(Include = "Name,Quantity,Description,Threshold,Price")] ItemViewModel item, HttpPostedFileBase imageFile)
         {
             //http://stackoverflow.com/questions/21682581/return-error-message-with-actionresult
 
@@ -73,6 +73,26 @@ namespace InventoryApp.Controllers
             return View(item);
         }
 
+        public JsonResult QueryItem(string q)
+        {
+            var query = _repository.FindItems(q);
+            var results = query.Select(i => new { Name = i.Name, ItemId = i.Id });
+            return Json(results, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetItem(int id)
+        {
+            Item item = _repository.GetItem(id);
+            var results = new
+            {
+                name = item.Name,
+                description = item.Description,
+                available = item.Quantity,
+                price = item.Price,
+            };
+            return Json(results, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult Image(int? id) {
             if (id == null)
             {
@@ -83,7 +103,10 @@ namespace InventoryApp.Controllers
             {
                 return HttpNotFound();
             }
-
+            if (item.Picture == null)
+            {
+                return File("~/Content/Images/noimage.png", "image/png");
+            }
             return File(item.Picture, item.MimeType);
         }
 
