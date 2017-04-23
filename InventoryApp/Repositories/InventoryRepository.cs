@@ -51,17 +51,8 @@ namespace InventoryApp.Repositories
         }
 
 
-        public Item EditItem(ItemViewModel itemViewModel, HttpPostedFileBase imageFile)
+        public Item EditItem(Item item, HttpPostedFileBase imageFile)
         {
-            Item item = new Item
-            {
-                Name = itemViewModel.Name,
-                Price = itemViewModel.Price,
-                Description = itemViewModel.Description,
-                Quantity = itemViewModel.Quantity,
-                Threshold = itemViewModel.Threshold
-            };
-
             if (imageFile != null && imageFile.IsImage())
             {
                 var pictureStream = imageFile.InputStream;
@@ -127,14 +118,6 @@ namespace InventoryApp.Repositories
         public List<Item> FindItems(string query)
         {
             query = query.ToLower().RemoveDiacritics();
-            /*var list = db.Inventory.Select(i => new { Name = i.Name, Id = i.Id }).ToList();
-
-            var ids = list.Where(i => i.Name.ToLower().RemoveDiacritics().Contains(query));
-
-            if (!ids.Any())
-            {
-                return new List<Item>();
-            }*/
             return db.Inventory.ToList().Where(i => i.Name.ToLower().RemoveDiacritics().Contains(query)).ToList();
         }
 
