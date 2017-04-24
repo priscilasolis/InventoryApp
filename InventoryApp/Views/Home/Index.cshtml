@@ -19,7 +19,9 @@
                 }
                 else if (ViewData["UserRole"].ToString() == "User")
                 {
-                    @Html.Action("MostSoldUser", "Dashboard");
+                    <div class="panel-body">
+                        @Html.Action("MostSoldUser", "Dashboard")
+                    </div>
                 }
             }
         </div>

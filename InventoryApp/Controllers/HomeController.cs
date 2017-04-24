@@ -27,11 +27,13 @@ namespace InventoryApp.Controllers
 
             if (roles.Any(i => i == "Administrator" || i == "Supervisor"))
             {
+                ViewBag.PanelTitle = "Inventory report";
                 ViewBag.Title = "Dashboard";
                 ViewData["UserRole"] = "Super";
                 return View();
             }
             ViewBag.Title = "Home page";
+            ViewBag.PanelTitle = "Items of the week";
             ViewData["UserRole"] = "User";
             return View();
         }
