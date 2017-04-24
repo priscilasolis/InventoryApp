@@ -43,7 +43,12 @@
                 </td>
                 <td>
                     @Html.ActionLink("Details", "Details", new { id = order.Id }, new { @class = "btn btn-primary" })
-                    @Html.ActionLink("Cancel", "CancelSale", new { id = order.Id }, new { @class = "btn btn-danger" })
+                    @{
+                        if (order.IsActive)
+                        {
+                            @Html.ActionLink("Cancel", "CancelOrder", new { id = order.Id }, new { @class = "btn btn-danger" });
+                        }
+                    }
                 </td>
             </tr>
         }

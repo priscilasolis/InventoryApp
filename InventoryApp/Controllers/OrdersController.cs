@@ -154,11 +154,11 @@ namespace InventoryApp.Controllers
             bool isUser = _repository.UserManager.IsInRole(User.Identity.GetUserId(), "User");
 
             ViewBag.Hidden = "hidden";
-            if (order.Type == Order.OrderType.Purchase && isSuper)
+            if (isSuper)
             {
                 return View(order);
             }
-            else if (order.Type == Order.OrderType.Sale && isSuper)
+            else if (order.Type == Order.OrderType.Sale && isUser)
             {
                 return View(order);
             }

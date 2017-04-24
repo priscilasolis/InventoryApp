@@ -365,13 +365,10 @@
     <Content Include="Views\Orders\Details.cshtml" />
     <Content Include="Views\Orders\CancelOrder.cshtml" />
     <Content Include="Views\Orders\Index.cshtml" />
-    <Content Include="Views\Orders\Create - Copia.cshtml" />
-    <Content Include="Views\Orders\Edit - Copia.cshtml" />
     <Content Include="Views\Dashboard\AdminDashboard.cshtml" />
     <Content Include="Views\Dashboard\UserDashboard.cshtml" />
     <Content Include="Views\Orders\UserIndex.cshtml" />
     <Content Include="Views\Orders\CreatePurchase.cshtml" />
-    <Content Include="Views\Orders\CancelPurchase.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
