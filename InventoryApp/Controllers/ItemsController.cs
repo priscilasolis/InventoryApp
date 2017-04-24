@@ -72,7 +72,7 @@ namespace InventoryApp.Controllers
 
             return View(item);
         }
-
+        [Authorize]
         public JsonResult QueryItem(string q)
         {
             var query = _repository.FindItems(q);
@@ -80,6 +80,7 @@ namespace InventoryApp.Controllers
             return Json(results, JsonRequestBehavior.AllowGet);
         }
 
+        [Authorize]
         public JsonResult GetItem(int id)
         {
             Item item = _repository.GetItem(id);
@@ -92,6 +93,23 @@ namespace InventoryApp.Controllers
             };
             return Json(results, JsonRequestBehavior.AllowGet);
         }
+
+        [Authorize(Roles = "Supervisor, Administrator")]
+        public JsonResult GetItemThreshold(int id)
+        {
+            Item item = _repository.GetItem(id);
+            var results = new
+            {
+                id = item.Id,
+                name = item.Name,
+                description = item.Description,
+                available = item.Quantity,
+                threshold = item.Threshold,
+                price = item.Price,
+            };
+            return Json(results, JsonRequestBehavior.AllowGet);
+        }
+
 
         public ActionResult Image(int? id) {
             if (id == null)

@@ -1,82 +1,298 @@
-﻿@model InventoryApp.Models.Order
-
+﻿@model InventoryApp.Models.PurchaseViewModel
+@Styles.Render("~/Content/themes/base/css")
 @{
     ViewBag.Title = "Create";
 }
 
-<h2>Create</h2>
-
-
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Order</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<h2>Make item purchases</h2>
+<div class="row">
+    <div class="col-md-8">
         <div class="form-group">
-            @Html.LabelFor(model => model.Quantity, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
-            </div>
+            @Html.TextBoxFor(model => model.Item.Name, new { @class = "form-control", placeholder = "Name of item" })
+            @Html.ValidationMessageFor(model => model.Item.Name, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.ItemId)
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.IsActive)
-                    @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+    </div>
+</div>
+<form id="form-quantity">
+    <div id="item-preview" class="hidden panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Item details</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="thumbnail">
+                        <img id="preview-image" src="" style="/*max-height: 200px;*/" />
+                    </div>
+                </div>
+                <div class="col-md-10">
+                    <h2 id="item-name">
+                        Name
+                    </h2>
+                    <p style="white-space: pre-line;" id="item-description"></p>
+                    <hr>
+                    <h4 style="white-space: pre-line;" id="item-details"></h4>
+                    <hr />
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Quantity, new { @class = "col-sm-1 control-label" })
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.Quantity, new { @class = "form-control", type = "number" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <input type="submit" id="button-add" value="Add" class="btn btn-primary">
                 </div>
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EnumDropDownListFor(model => model.Type, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ItemId, "ItemId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("ItemId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.ItemId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ApplicationUserId, "ApplicationUserId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("ApplicationUserId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.ApplicationUserId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
     </div>
-}
+</form>
+<div id="total-details" class="hidden">
+    <h1>Total</h1>
+    <p id="total-order" class="lead"></p>
+    <button type="button" id="button-buy" class="btn btn-primary">ORDER PURCHASE</button>
+    <button type="button" id="button-cancel" class="btn btn-danger">CANCEL</button>
+    <h1 id="title">Your items</h1>
+    <div id="panel-group">
+
+    </div>
+</div>
+
+<div class="hidden panel panel-default panel-template">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="thumbnail">
+                    <img src="" alt="">
+                </div>
+            </div>
+            <div class="col-md-10">
+                <h3 class="item-name"></h3>
+                <p class="description" style="white-space: pre-line;"></p>
+                <hr>
+                <h4 class="price-quantity" style="white-space: pre-line;"></h4>
+                <h3 class="subtotal"></h3>
+            </div>
+        </div>
+        <button type="button" id="button" class="btn btn-danger">Remove</button>
+    </div>
+</div>
 
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>
 
+
+
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script>
+    $(document).ready(function () {
+        $("#Item_Name").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '@Url.Action("QueryItem", "Items")',
+                    datatype: "json",
+                    data: {
+                        q: request.term
+                    },
+                    success: function (data) {
+                        response($.map(data, function (val, item) {
+                            return {
+                                label: val.Name,
+                                value: val.Name,
+                                itemId: val.ItemId
+                            }
+                        }))
+                    }
+                })
+            },
+            select: function (event, ui) {
+                $("#ItemId").val(ui.item.itemId);
+                updateItemPreview();
+                var image = '@Url.Action("Image", "Items")?id=' + ui.item.itemId;
+
+            }
+        });
+
+        $('#form-quantity').submit(function (event) {
+            event.preventDefault(event);
+
+            var itemId = $("#ItemId").val();
+            var quantity = parseInt($("#Quantity").val());
+
+            if (quantity < 1) {
+                return;
+            }
+
+            var item = itemPreview;
+            item.quantity = quantity;
+
+            if (items.length != 0) {
+                for (i = 0; i < items.length; i++) {
+                    if (items[i].id == itemId) {
+                        quantity += items[i].quantity;
+                        updateTotal();
+                    }
+                }
+            } else {
+                items.push(item);
+                addPanel(item);
+                updateTotal();
+            }
+
+        });
+
+        var itemPreview;
+        function updateItemPreview() {
+            var itemId = $("#ItemId").val();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetItemThreshold", "Items")',
+                data: { id: itemId },
+                //datatype: "json",
+                success: function (item, status, jqXHR) {
+                    itemPreview = item;
+                    $("#item-preview").removeClass("hidden");
+
+                    var image = '@Url.Action("Image", "Items")?id=' + itemId;
+                    $("#preview-image").attr("src", image);
+
+                    $("#item-name").text(item.name);
+                    var price = parseFloat(item.price, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    $("#item-details").text("Price: $ " + price + "\nQuantity in stock: " + item.available + "\nThreshold: " + item.threshold);
+
+                    var description = $("#item-description");
+
+                    if (item.description == null) {
+                        description.html('<em>This item has no description.</em>')
+                    } else {
+                        description.text(item.description);
+                    }
+
+                },
+                error: function () {
+                    console.log("error");
+                }
+            });
+
+
+            $("").text();
+        }
+
+        var items = [];
+
+        /*$("#Quantity").spinner();*/
+
+        $("#button-buy").click(function (event) {
+            var orders = [];
+            for (i = 0; i < items.length; i++) {
+                var order = {
+                    ItemId: items[i].id,
+                    Quantity: items[i].quantity
+                };
+                orders.push(order);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("CreatePurchases", "Orders")',
+                data: JSON.stringify({ 'orders': orders }),
+                contentType: 'application/json',
+                datatype: "json",
+                success: function (result, status, jqXHR) {
+                    if (result.error) return;
+                    console.log(result.failedOrders);
+                    if (result.failedOrders.length == 0) {
+                        window.location.replace('@Url.Action("Index", "Orders")');
+                    } else {
+                        
+                    }
+                },
+                error: function () {
+                    console.log("error");
+                }
+            });
+        });
+
+        function addPanel(item) {
+            var panel = $(".panel-template").clone();
+            panel.removeClass("panel-template").removeClass("hidden");
+            $("#panel-group").append(panel);
+
+            panel.attr("id", "panel-" + item.id);
+            var title = panel.find($("h3.item-name"));
+            var description = panel.find($("p.description"));
+            var pq = panel.find($("h4.price-quantity"));
+            var subtotal = panel.find($("h3.subtotal"));
+            var button = panel.find($("button"));
+            var thumbnail = panel.find($("img"));
+
+            thumbnail.attr("src", '@Url.Action("Image", "Items")?id=' + item.id);
+
+            title.text(item.name);
+
+            if (item.description == null) {
+                description.append('<em>This item has no description.</em>')
+            } else {
+                description.text(item.description);
+            }
+            var price = parseFloat(item.price, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+            pq.text("Price: $ " + price + "\nQuantity: " + item.quantity);
+            var totalItem = parseFloat(item.price * item.quantity, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+            subtotal.text("Subtotal: $ " + totalItem);
+
+            button.click(function () {
+                for (i = 0; i < items.length; i++) {
+                    if (items[i].id == item.id) {
+                        items.splice(i, 1);
+                    }
+                }
+
+                removePanel(item.id);
+
+                updateTotal();
+            });
+        }
+
+        function updatePanel(item) {
+            panel = $("#panel-" + item.id);
+            var pq = panel.find($("h4.price-quantity"));
+            var subtotal = panel.find($("h3.subtotal"));
+
+            var price = parseFloat(item.price, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+            pq.text("Price: $ " + price + "\nQuantity: " + item.quantity);
+            var totalItem = parseFloat(item.price * item.quantity, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+            subtotal.text("Subtotal: $ " + totalItem);
+        }
+
+        function removePanel(id) {
+            $("#panel-" + id).remove();
+        }
+
+        var total = 0;
+        function updateTotal() {
+            if (items.length == 0) {
+                $("#total-details").addClass("hidden");
+                return;
+            } else if ($("#total-details").hasClass("hidden")) {
+                $("#total-details").removeClass("hidden");
+            }
+
+            total = 0;
+            for (i = 0; i < items.length; i++) {
+                total += items[i].price * items[i].quantity;
+            }
+
+            var totalFormatted = parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+
+            $("#total-order").text("Total: $ " + totalFormatted);
+        }
+
+    });
+    </script>
 }

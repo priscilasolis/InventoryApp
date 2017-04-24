@@ -7,56 +7,126 @@
 <h2>Orders History</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create purchase", "CreatePurchase", null, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Create sale", "CreateSale", null, new { @class = "btn btn-primary" })
 </p>
-<table class="table table-striped">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.ApplicationUser.Email)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Item.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Quantity)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsActive)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Type)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Date)
-        </th>
-        <th></th>
-    </tr>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Purchases</h3>
+    </div>
+    <div style="overflow-y: scroll; height: 300px">
+        <table class="table table-striped">
+            <tr>
+                <th>
+                    User
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Item.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Quantity)
+                </th>
+                <th>
+                    Active
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
+                </th>
+                <th></th>
+            </tr>
+            @foreach (var item in Model.Where(i => i.Type == InventoryApp.Models.Order.OrderType.Purchase))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ApplicationUser.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Quantity)
+                    </td>
+                    <td>
+                        @{
+                            if (item.IsActive)
+                            { 
+                                
+                            }
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Date)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Details", "Details", new { id = item.Id }, new { @class = "btn btn-primary" })
+                        @{
+                            if (item.IsActive)
+                            {
+                                @Html.ActionLink("Cancel", "CancelOrder", new { id = item.Id }, new { @class = "btn btn-danger" });
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    
+</div>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.ApplicationUser.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Quantity)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsActive)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Type)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Date)
-        </td>
-        <td>
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Cancel", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
 
-</table>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Sales</h3>
+    </div>
+    <div style="overflow-y: scroll; height: 300px">
+        <table class="table table-striped" style="overflow-y: scroll; height: 300px">
+            <tr>
+                <th>
+                    User
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Item.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Quantity)
+                </th>
+                <th>
+                    Active
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
+                </th>
+                <th></th>
+            </tr>
+            @foreach (var item in Model.Where(i => i.Type == InventoryApp.Models.Order.OrderType.Sale))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ApplicationUser.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Quantity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsActive)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Date)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Details", "Details", new { id = item.Id }, new { @class = "btn btn-primary" })
+                        @{
+                            if (item.IsActive) { @Html.ActionLink("Cancel", "CancelOrder", new { id = item.Id }, new { @class = "btn btn-danger" }); }
+                        }
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+        
+    
+</div>

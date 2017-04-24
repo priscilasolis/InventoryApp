@@ -15,30 +15,36 @@ namespace InventoryApp.Controllers
 {
     public class OrdersController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
         private readonly InventoryRepository _repository = new InventoryRepository();
 
         // GET: Orders
-        [Authorize(Roles = "Administrator,Supervisor")]
+        [Authorize]
         public ActionResult Index()
         {
-            var orders = db.Orders.Include(o => o.ApplicationUser).Include(o => o.Item);
-            return View(orders.ToList());
+            ApplicationUser currentUser = _repository.UserManager.FindById(User.Identity.GetUserId());
+            List<string> roles = _repository.UserManager.GetRoles(User.Identity.GetUserId()).ToList();
+
+            if (roles.Any(i => i == "Administrator" || i == "Supervisor"))
+            {
+                return View(_repository.GetOrders());
+            }
+            else if (roles.Contains("User"))
+            {
+                return RedirectToAction("UserIndex");
+            }
+
+            return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
         }
 
 
         [Authorize]
         public ActionResult UserIndex()
         {
-            UserManager<ApplicationUser> UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
-            ApplicationUser currentUser = UserManager.FindById(User.Identity.GetUserId());
-
+            ApplicationUser currentUser = _repository.UserManager.FindById(User.Identity.GetUserId());
             var r = _repository.GetSalesUser(currentUser);
             
             return View(r);
         }
-
-
 
         // GET: Orders/Details/5
         public ActionResult Details(int? id)
@@ -47,7 +53,7 @@ namespace InventoryApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Order order = db.Orders.Find(id);
+            Order order = _repository.GetOrder(id);
             if (order == null)
             {
                 return HttpNotFound();
@@ -67,8 +73,7 @@ namespace InventoryApp.Controllers
         public JsonResult CreateSales(IEnumerable<SaleViewModel> orders)
         {
             if (ModelState.IsValid) {
-                UserManager<ApplicationUser> UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
-                ApplicationUser currentUser = UserManager.FindById(User.Identity.GetUserId());
+                ApplicationUser currentUser = _repository.UserManager.FindById(User.Identity.GetUserId());
 
                 List<int> failedOrders = new List<int>();
                 foreach (SaleViewModel order in orders)
@@ -102,98 +107,75 @@ namespace InventoryApp.Controllers
             return Json(new { isValid = false }, JsonRequestBehavior.AllowGet);
         }
 
-        // GET: Orders/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult CreatePurchase()
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Order order = db.Orders.Find(id);
-            if (order == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.ApplicationUserId = new SelectList(db.Users, "Id", "Email", order.ApplicationUserId);
-            ViewBag.ItemId = new SelectList(db.Inventory, "Id", "Name", order.ItemId);
-            return View(order);
+            return View();
         }
 
-        // POST: Orders/Edit/5
-        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
-        // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Quantity,IsActive,Type,Date,ItemId,ApplicationUserId")] Order order)
+        [Authorize]
+        public JsonResult CreatePurchases(IEnumerable<PurchaseViewModel> orders)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(order).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                ApplicationUser currentUser = _repository.UserManager.FindById(User.Identity.GetUserId());
+
+                List<int> failedOrders = new List<int>();
+                foreach (PurchaseViewModel order in orders)
+                {
+                    bool orderSucess = _repository.CreatePurchase(order.ItemId, order.Quantity, currentUser);
+                    if (!orderSucess) failedOrders.Add(order.ItemId);
+                }
+
+                return Json(new { error = false, failedOrders = failedOrders });
             }
-            ViewBag.ApplicationUserId = new SelectList(db.Users, "Id", "Email", order.ApplicationUserId);
-            ViewBag.ItemId = new SelectList(db.Inventory, "Id", "Name", order.ItemId);
-            return View(order);
+
+            return Json(new { error = true });
         }
 
         // GET: Orders/Delete/5
         [Authorize]
-        public ActionResult CancelSale(int? id)
+        public ActionResult CancelOrder(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Order order = db.Orders.Find(id);
+            Order order = _repository.GetOrder(id);
             if (order == null)
             {
                 return HttpNotFound();
             }
-            return View(order);
+
+            if (!order.IsActive) return HttpNotFound("The order you're looking for has been already cancelled");
+
+            bool isSuper = _repository.UserManager.IsInRole(User.Identity.GetUserId(), "Administrator");
+            isSuper = isSuper || _repository.UserManager.IsInRole(User.Identity.GetUserId(), "Supervisor");
+            bool isUser = _repository.UserManager.IsInRole(User.Identity.GetUserId(), "User");
+
+            ViewBag.Hidden = "hidden";
+            if (order.Type == Order.OrderType.Purchase && isSuper)
+            {
+                return View(order);
+            }
+            else if (order.Type == Order.OrderType.Sale && isSuper)
+            {
+                return View(order);
+            }
+
+            return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
         }
 
-        [HttpPost, ActionName("CancelSale")]
+        [HttpPost, ActionName("CancelOrder")]
         [Authorize]
-        public ActionResult CancelSaleConfirmed(int id)
+        public ActionResult CancelOrderConfirmed(int id)
         {
-            _repository.CancelSale(id);
+            bool success = _repository.CancelOrder(id);
+            if (!success)
+            {
+                return View(_repository.GetOrder(id));
+            }
             return RedirectToAction("Index");
-        }
-
-        // GET: Orders/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Order order = db.Orders.Find(id);
-            if (order == null)
-            {
-                return HttpNotFound();
-            }
-            return View(order);
-        }
-
-        // POST: Orders/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Order order = db.Orders.Find(id);
-            db.Orders.Remove(order);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }

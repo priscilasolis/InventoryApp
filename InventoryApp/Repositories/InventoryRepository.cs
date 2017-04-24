@@ -1,4 +1,6 @@
 ﻿using InventoryApp.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -10,7 +12,16 @@ namespace InventoryApp.Repositories
 {
     public class InventoryRepository
     {
+        public ApplicationDbContext DatabaseContext { get { return db; } }
+        public UserManager<ApplicationUser> UserManager { get { return userManager; } }
+
         private ApplicationDbContext db = new ApplicationDbContext();
+        private UserManager<ApplicationUser> userManager;
+
+        public InventoryRepository()
+        {
+            userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+        }
 
         public Item CreateItem(ItemViewModel itemViewModel, HttpPostedFileBase imageFile)
         {
@@ -37,6 +48,16 @@ namespace InventoryApp.Repositories
             db.SaveChanges();
 
             return item;
+        }
+
+        internal object GetOrders()
+        {
+            return db.Orders.ToList();
+        }
+
+        public Order GetOrder(int? id)
+        {
+            return db.Orders.Find(id);
         }
 
         public List<Item> GetInventory()
@@ -175,6 +196,19 @@ namespace InventoryApp.Repositories
             return true;
         }
 
+        public bool CancelOrder(int id)
+        {
+            Order order = GetOrder(id);
+            if (order.Type == Order.OrderType.Sale)
+            {
+                return CancelSale(id);
+            } else if (order.Type == Order.OrderType.Purchase)
+            {
+                return CancelPurchase(id);
+            }
+            return false;
+        }
+
         public List<Item> FindItems(string query)
         {
             query = query.ToLower().RemoveDiacritics();
@@ -220,6 +254,38 @@ namespace InventoryApp.Repositories
             db.SaveChanges();
 
             return true;
+        }
+
+        public List<Item> GetMostSoldWeek()
+        {
+            var x = db.Orders.Where(o => o.IsActive && o.Type == Order.OrderType.Sale && o.Date >= DateTime.UtcNow.AddDays(-7))
+                .GroupBy(i => i.Item, i => i.Quantity, (item, quantity) => new
+                {
+                    Item = item,
+                    Sold = quantity.Sum()
+                });
+            return x.OrderBy(i => i.Sold).Reverse().Take(10).Select(i => i.Item).ToList();
+        }
+
+        public List<Item> GetItemsByThreshold()
+        {
+            var behindThreshold = db.Inventory.Where(i => i.Quantity < i.Threshold).OrderBy(i => i.Quantity);
+            var length = behindThreshold.Count();
+
+            if (length == 10)
+            {
+                return behindThreshold.ToList();
+            }
+            else if (length > 10)
+            {
+                return behindThreshold.Take(10).ToList();
+            }
+
+            var barelyAboveThreshold = db.Inventory.Except(behindThreshold).OrderBy(i => i.Threshold - i.Quantity);
+
+            List<Item> results = behindThreshold.Concat(barelyAboveThreshold).Take(10).ToList();
+
+            return results;
         }
 
         public void RemoveItem(int id)

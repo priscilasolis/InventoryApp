@@ -1,13 +1,19 @@
 ﻿@model InventoryApp.Models.Order
 
 @{
-    ViewBag.Title = "Order details";
+    ViewBag.Title = "Cancel order";
 }
 
-<h2>Order details</h2>
+<h2>Cancel order</h2>
 
+<h3>Are you sure you want to cancel this order?</h3>
 <div>
-    <div class="panel panel-info">
+    <div class="@ViewBag.Hidden alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>We're sorry.</strong> This order cannot be cancelled. Make some changes in inventory and try again.
+    </div>
+    <div class="panel panel-warning">
+        <div class="panel-heading"><h3 class="panel-title">Order</h3></div>
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-2">
@@ -29,9 +35,15 @@
 
                 </div>
             </div>
-
         </div>
     </div>
 </div>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
 
-@Html.ActionLink("Back to List", "Index", "Orders", null, new { @class = "btn btn-default" })
+        <div class="form-actions no-color">
+            <input type="submit" value="Cancel this order" class="btn btn-danger" />
+            @Html.ActionLink("Back to List", "Index", "Orders", null, new { @class = "btn btn-default" })
+        </div>
+    }
