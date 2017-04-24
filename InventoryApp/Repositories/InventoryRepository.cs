@@ -346,7 +346,7 @@ namespace InventoryApp.Repositories
 
         public List<ApplicationUser> GetSuperUsers()
         {
-            return db.Users.Where(u => UserManager.IsInRole(u.Id, "Administrator") || UserManager.IsInRole(u.Id, "Supervisor")).ToList();
+            return db.Users.ToList().Where(u => UserManager.IsInRole(u.Id, "Administrator") || UserManager.IsInRole(u.Id, "Supervisor")).ToList();
         }
     }
 
