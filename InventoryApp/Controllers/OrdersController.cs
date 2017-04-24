@@ -62,27 +62,6 @@ namespace InventoryApp.Controllers
             return View();
         }
 
-        /*[HttpPost]
-        [Authorize]
-        [ValidateAntiForgeryToken]
-        public ActionResult CreateSale([Bind(Include = "Quantity,ItemId")] SaleViewModel order)
-        {
-            if (ModelState.IsValid)
-            {
-                //http://stackoverflow.com/questions/35906059/asp-mvc5-identity-how-to-get-current-applicationuser-and-use-this-user-to-que
-                UserManager<ApplicationUser> UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
-                ApplicationUser currentUser = UserManager.FindById(User.Identity.GetUserId());
-
-                bool success = _repository.CreateSale(order.ItemId, order.Quantity, currentUser);
-                if (success) {
-                    return RedirectToAction("Index");
-                }
-            }
-
-            //ViewBag.ItemId = new SelectList(db.Inventory, "Id", "Name", order.ItemId);
-            return View(order);
-        }*/
-
         [HttpPost]
         [Authorize]
         public JsonResult CreateSales(IEnumerable<SaleViewModel> orders)
@@ -99,7 +78,6 @@ namespace InventoryApp.Controllers
                 }
 
                 return Json(new { error = false, failedOrders = failedOrders });
-
             }
             
             return Json(new { error = true });
@@ -157,6 +135,30 @@ namespace InventoryApp.Controllers
             ViewBag.ApplicationUserId = new SelectList(db.Users, "Id", "Email", order.ApplicationUserId);
             ViewBag.ItemId = new SelectList(db.Inventory, "Id", "Name", order.ItemId);
             return View(order);
+        }
+
+        // GET: Orders/Delete/5
+        [Authorize]
+        public ActionResult CancelSale(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Order order = db.Orders.Find(id);
+            if (order == null)
+            {
+                return HttpNotFound();
+            }
+            return View(order);
+        }
+
+        [HttpPost, ActionName("CancelSale")]
+        [Authorize]
+        public ActionResult CancelSaleConfirmed(int id)
+        {
+            _repository.CancelSale(id);
+            return RedirectToAction("Index");
         }
 
         // GET: Orders/Delete/5
