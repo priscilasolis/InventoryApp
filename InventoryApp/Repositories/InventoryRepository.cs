@@ -80,11 +80,67 @@ namespace InventoryApp.Repositories
             db.SaveChanges();
         }
 
-        public Item MakePurchase(int id, int quantity)
+        public bool CreatePurchase(int itemId, int quantity, ApplicationUser user)
         {
-            Item item = db.Inventory.Find(id);
+            Item item = db.Inventory.Find(itemId);
+
+            if (item == null || quantity < 0)
+            {
+                return false;
+            }
+            else if (item.Quantity < 0)
+            {
+                throw new IndexOutOfRangeException();
+            }
+
+            Order order = new Order
+            {
+                ItemId = item.Id,
+                Date = DateTime.UtcNow,
+                ApplicationUserId = user.Id,
+                Type = Order.OrderType.Purchase,
+                Quantity = quantity,
+                IsActive = true
+            };
+
             item.Quantity += quantity;
-            return item;
+
+            db.Entry(item).State = EntityState.Modified;
+            db.Orders.Add(order);
+            db.SaveChanges();
+
+            return true;
+        }
+
+        public bool CancelPurchase(int orderId)
+        {
+            Order order = db.Orders.Find(orderId);
+            Item item = db.Inventory.Find(order.ItemId);
+
+            if (item == null || order == null)
+            {
+                return false;
+            }
+            else if (order.Type != Order.OrderType.Purchase || !order.IsActive)
+            {
+                return false;
+            }
+
+            bool cannotCancel = db.Orders.Any(o => o.Type == Order.OrderType.Sale && o.ItemId == item.Id && o.Date > order.Date);
+
+            if (cannotCancel)
+            {
+                return false;
+            }
+
+            order.IsActive = false;
+            item.Quantity -= order.Quantity;
+
+            db.Entry(item).State = EntityState.Modified;
+            db.Entry(order).State = EntityState.Modified;
+            db.SaveChanges();
+
+            return true;
         }
 
         public bool CreateSale(int itemId, int quantity, ApplicationUser user)
