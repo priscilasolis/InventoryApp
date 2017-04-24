@@ -126,7 +126,7 @@ namespace InventoryApp.Repositories
                 return false;
             }
 
-            bool cannotCancel = db.Orders.Any(o => o.Type == Order.OrderType.Sale && o.ItemId == item.Id && o.Date > order.Date);
+            bool cannotCancel = db.Orders.Any(o => o.Type == Order.OrderType.Sale && o.ItemId == item.Id && o.IsActive && o.Date > order.Date);
 
             if (cannotCancel)
             {
