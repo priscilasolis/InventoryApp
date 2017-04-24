@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Web;
 
 namespace InventoryApp.Repositories
@@ -91,6 +92,11 @@ namespace InventoryApp.Repositories
             db.Entry(item).State = EntityState.Modified;
             db.SaveChanges();
 
+            if (item.Quantity < item.Threshold)
+            {
+                sendEmailAlert(item);
+            }
+
             return item;
         }
 
@@ -156,10 +162,15 @@ namespace InventoryApp.Repositories
 
             order.IsActive = false;
             item.Quantity -= order.Quantity;
-
+        
             db.Entry(item).State = EntityState.Modified;
             db.Entry(order).State = EntityState.Modified;
             db.SaveChanges();
+            
+            if (item.Quantity < item.Threshold)
+            {
+                sendEmailAlert(item);
+            }
 
             return true;
         }
@@ -192,6 +203,11 @@ namespace InventoryApp.Repositories
             db.Entry(item).State = EntityState.Modified;
             db.Orders.Add(order);
             db.SaveChanges();
+
+            if (item.Quantity < item.Threshold)
+            {
+                sendEmailAlert(item);
+            }
 
             return true;
         }
@@ -256,15 +272,16 @@ namespace InventoryApp.Repositories
             return true;
         }
 
-        public List<Item> GetMostSoldWeek()
+        public List<ItemSoldViewModel> GetMostSoldWeek()
         {
-            var x = db.Orders.Where(o => o.IsActive && o.Type == Order.OrderType.Sale && o.Date >= DateTime.UtcNow.AddDays(-7))
-                .GroupBy(i => i.Item, i => i.Quantity, (item, quantity) => new
+            DateTime aWeekAgo = DateTime.UtcNow.AddDays(-7);
+            var x = db.Orders.Where(o => o.IsActive && o.Type == Order.OrderType.Sale && o.Date >= aWeekAgo)
+                .GroupBy(i => i.Item, i => i.Quantity, (item, quantity) => new ItemSoldViewModel
                 {
-                    Item = item,
-                    Sold = quantity.Sum()
-                });
-            return x.OrderBy(i => i.Sold).Reverse().Take(10).Select(i => i.Item).ToList();
+                    Name = item.Name,
+                    QuantitySold = quantity.Sum()
+                }).ToList();
+            return x.OrderByDescending(i => i.QuantitySold).Take(10).ToList();
         }
 
         public List<Item> GetItemsByThreshold()
@@ -281,9 +298,9 @@ namespace InventoryApp.Repositories
                 return behindThreshold.Take(10).ToList();
             }
 
-            var barelyAboveThreshold = db.Inventory.Except(behindThreshold).OrderBy(i => i.Threshold - i.Quantity);
+            var barelyAboveThreshold = db.Inventory.Except(behindThreshold).OrderBy(i => i.Quantity - i.Threshold).ToList();
 
-            List<Item> results = behindThreshold.Concat(barelyAboveThreshold).Take(10).ToList();
+            List<Item> results = behindThreshold.ToList().Concat(barelyAboveThreshold.ToList()).Take(10).ToList();
 
             return results;
         }
@@ -295,7 +312,43 @@ namespace InventoryApp.Repositories
             db.SaveChanges();
         }
 
-        //public void MakeSale(int id, )
+        private void sendEmailAlert(Item item)
+        {
+            MailMessage mail = new MailMessage();
+            SmtpClient client = new SmtpClient()
+            {
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Host = "smtp.gmail.com",
+                Credentials = new System.Net.NetworkCredential("erickelias881@gmail.com", "Erick2127")
+            };
+            List<string> superusersEmails = GetSuperUsers().Select(u => u.Email).ToList();
 
+            foreach (string email in superusersEmails)
+            {
+                mail.To.Add(new MailAddress(email));
+            }
+            
+            mail.From = new MailAddress("erickelias881@gmail.com");
+            mail.Subject = "InventoryApp - Inventory alert";
+
+            string body = "<h1>Inventory alert</h1>";
+
+            body += "<p>The next item is below of its threshold</p><br/>";
+            body += string.Format("<p>Name: {0}</p><p>Quantity available: {1}</p><p>Threshold: {2}</p>", item.Name, item.Quantity, item.Threshold);
+            mail.Body = body;
+
+            mail.IsBodyHtml = true;
+            client.Send(mail);
+        }
+
+        public List<ApplicationUser> GetSuperUsers()
+        {
+            return db.Users.Where(u => UserManager.IsInRole(u.Id, "Administrator") || UserManager.IsInRole(u.Id, "Supervisor")).ToList();
+        }
     }
+
+
 }

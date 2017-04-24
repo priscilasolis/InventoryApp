@@ -207,6 +207,7 @@
     <Compile Include="Migrations\201704200638357_ItemsAndOrders.Designer.cs">
       <DependentUpon>201704200638357_ItemsAndOrders.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\ViewModels\ItemSoldViewModel.cs" />
     <Compile Include="Models\ViewModels\PurchaseViewModel.cs" />
     <Compile Include="Models\ViewModels\SaleViewModel.cs" />
     <Compile Include="Repositories\Extensions\ExtensionMethods.cs" />
@@ -370,6 +371,7 @@
     <Content Include="Views\Dashboard\LowThreshold.cshtml" />
     <Content Include="Views\Orders\UserIndex.cshtml" />
     <Content Include="Views\Orders\CreatePurchase.cshtml" />
+    <Content Include="Views\Dashboard\MostSoldUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

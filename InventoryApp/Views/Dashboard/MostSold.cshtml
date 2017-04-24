@@ -1,57 +1,18 @@
-﻿@model IEnumerable<InventoryApp.Models.Order>
+﻿@model IEnumerable<InventoryApp.Models.ItemSoldViewModel>
 
 @{
-    ViewBag.Title = "MostSold";
+    Layout = "";
 }
-
-<h2>MostSold</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Quantity)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsActive)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Date)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ItemId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ApplicationUserId)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Quantity)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsActive)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Date)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ItemId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ApplicationUserId)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+<h3>Most sold items</h3>
+@{
+    float max = Model.Max(i => i.QuantitySold);
+    foreach (var item in Model)
+    {
+        <h4>@Html.DisplayFor(modelItem => item.Name)
+        <small>(@Html.DisplayFor(modelItem => item.QuantitySold) items sold)</small></h4>
+        <div class='progress'>
+                <div class="progress-bar progress-bar-info" role="progressbar" style="width: @string.Format("{0}%", item.QuantitySold / max * 100)">
+                </div>
+        </div>
+    }
 }
-
-</table>

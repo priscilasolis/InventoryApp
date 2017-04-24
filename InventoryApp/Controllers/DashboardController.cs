@@ -16,6 +16,11 @@ namespace InventoryApp.Controllers
             return View(_repository.GetMostSoldWeek());
         }
 
+        public ActionResult MostSoldUser()
+        {
+            return View(_repository.GetMostSoldWeek());
+        }
+
         public ActionResult LowThreshold()
         {
 

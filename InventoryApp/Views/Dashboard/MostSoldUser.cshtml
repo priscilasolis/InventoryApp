@@ -1,0 +1,17 @@
+﻿@model IEnumerable<InventoryApp.Models.ItemSoldViewModel>
+
+@{
+    Layout = "";
+}
+<h3>Top 10 bestsellers of the week</h3>
+<ol>
+    @{
+        foreach (var item in Model)
+        {
+            <li>
+                @Html.DisplayFor(modelItem => item.Name)
+            <small>(@Html.DisplayFor(modelItem => item.QuantitySold) items sold)</small>
+        </li>
+        }
+    }
+</ol>
