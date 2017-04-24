@@ -1,4 +1,7 @@
-﻿body {
+﻿
+@import url('https://fonts.googleapis.com/css?family=Acme');
+
+body {
 }
 
 
@@ -9,4 +12,10 @@
 
 .item-detail{
     font-size: 15px;
+}
+
+.title{
+    font-family: 'Acme'!important;
+    font-size: 34px;
+    color: white!important;
 }
